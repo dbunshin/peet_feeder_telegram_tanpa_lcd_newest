@@ -5,7 +5,7 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
-#include <Wire.h> 
+#include <Wire.h>
 #include "CTBot.h"
 
 CTBot myBot;
@@ -14,8 +14,8 @@ NTPClient timeClient(ntpUDP, "0.id.pool.ntp.org", 25200,60000);
 
 Servo servo;
 
-#define WIFI_SSID "Discrete Mathematics"
-#define WIFI_PASS "masuk123"
+#define WIFI_SSID "xxxx"
+#define WIFI_PASS "xxxx"
 
 #define MQTT_SERV "io.adafruit.com"
 #define MQTT_PORT 1883
@@ -47,12 +47,12 @@ void setup()
 {
 // initialize digital pin LED_BUILTIN as an output.
 //  pinMode(LED_BUILTIN, OUTPUT);
-  
+
   Serial.begin(9600);
   timeClient.begin();
   Wire.begin(D2, D1);
 
-  
+
   //Connect to WiFi
   Serial.print("\n\nConnecting Wifi... ");
   WiFi.begin(WIFI_SSID, WIFI_PASS);
@@ -61,7 +61,7 @@ void setup()
   {
     delay(1000);
   }
-  
+
   //Subscribe to the onoff feed
   mqtt.subscribe(&onoff);
   servo.attach(SERVO_PIN);
@@ -93,7 +93,7 @@ void loop()
   // blue led off
    pinMode (LED_BUILTIN, OUTPUT); // Define LED as output
    digitalWrite (LED_BUILTIN, HIGH); // Turn off
-  
+
    MQTT_connect();
    timeClient.update();
    hh = timeClient.getHours();
@@ -103,15 +103,15 @@ void loop()
   Adafruit_MQTT_Subscribe * subscription;
   while ((subscription = mqtt.readSubscription(5000)))
   {
-    
+
     if (subscription == &onoff)
     {
       //Print the new value to the serial monitor
       Serial.println((char*) onoff.lastread);
-     
+
     if (!strcmp((char*) onoff.lastread, "ON"))
       {
-        
+
         open_door();
         delay(1500);
         close_door();
@@ -119,38 +119,38 @@ void loop()
       if (!strcmp((char*) onoff.lastread, "Morning"))
       {
         feed_hour = 05;
-        feed_minute = 30; 
+        feed_minute = 30;
       }
       if (!strcmp((char*) onoff.lastread, "Afternoon"))
       {
         feed_hour = 03;
-        feed_minute = 30; 
+        feed_minute = 30;
       }
       if (!strcmp((char*) onoff.lastread, "Evening"))
       {
         feed_hour = 07;
-        feed_minute = 30; 
+        feed_minute = 30;
       }
      }
    }
    if( hh == feed_hour && mm == feed_minute &&feed==true) //Comparing the current time with the Feed time
 
-    { 
+    {
       open_door();
       delay(1500);
       close_door();
-      feed= false; 
+      feed= false;
       }
-    
-  
+
+
   // --- begin telegram bot
-  
+
     // a variable to store telegram message data
   TBMessage msg;
 
   // if there is an incoming message...
   if (myBot.getNewMessage(msg)) {
-    if (msg.text.equalsIgnoreCase("Mamam")) {                   //Perintah dari telegram ke perangkat   
+    if (msg.text.equalsIgnoreCase("Mamam")) {                   //Perintah dari telegram ke perangkat
       open_door();
       delay(1500);
       close_door();
@@ -160,28 +160,28 @@ void loop()
     else if (msg.text.equalsIgnoreCase("Makan")) {              //Perintah dari telegram ke perangkat
       open_door();
       delay(2000);
-      close_door();   
+      close_door();
       myBot.sendMessage(msg.sender.id, "Kami segenap KuDa alias Kucing Dagul, Mocca - Chino - Krimpi mengucapkan, terima kasih banyak atas makanan yang diberikan ke kami hari ini, semoga Ndoro selalu dijaga kesehatannya, dilancarkan rezekinya, dan diberkahi oleh Allah SWT, Amin Amin Ya Rabbal Alamin.. 2s"); //Balasan dari perangkat ke Bot Telegram
       Serial.println("Makan Sukses");
     }
     else if (msg.text.equalsIgnoreCase("Mangan")) {              //Perintah dari telegram ke perangkat
       open_door();
       delay(1500);
-      close_door();   
+      close_door();
       myBot.sendMessage(msg.sender.id, "Suwun wis dikei mangan, kulo mangan riyin nggiih Ndoro.."); //Balasan dari perangkat ke Bot Telegram
       Serial.println("Mangan ben wareg");
     }
     else if (msg.text.equalsIgnoreCase("Madang")) {              //Perintah dari telegram ke perangkat
       open_door();
       delay(1500);
-      close_door();   
+      close_door();
       myBot.sendMessage(msg.sender.id, "Suwun wis dikei madang, kulo madang riyin nggiih Ndoro.."); //Balasan dari perangkat ke Bot Telegram
       Serial.println("Madang ben wareg");
     }
     else if (msg.text.equalsIgnoreCase("Mbadok")) {              //Perintah dari telegram ke perangkat
       open_door();
       delay(3000);
-      close_door();   
+      close_door();
       myBot.sendMessage(msg.sender.id, "Suwun mpun diparingi badokan sing gadah, kulo mbadok riyin nggiih Ndoro, Mugi Barokah..Amin Ya Rabbal alamin.. 3s"); //Balasan dari perangkat ke Bot Telegram
       Serial.println("Mbadok ben wareg");
     }
@@ -189,20 +189,20 @@ void loop()
     else if (msg.text.equalsIgnoreCase("goyang")) {              //Perintah dari telegram ke perangkat
       open_door();
       delay(500);
-      
+
       open_door();
       delay(500);
-      
+
       open_door();
       delay(500);
-      
+
       open_door();
       delay(500);
-      
+
       open_door();
       delay(500);
-                        
-      close_door();   
+
+      close_door();
       myBot.sendMessage(msg.sender.id, "Goyang Kalibrasi 5x"); //Balasan dari perangkat ke Bot Telegram
       Serial.println("Goyang Kalibrasi 5x");
     }
@@ -214,43 +214,43 @@ void loop()
       myBot.sendMessage(msg.sender.id, reply);             // and send it
     }
   }
-  
-  /// -- end telegram bot   
-    
+
+  /// -- end telegram bot
+
 }
 
-void MQTT_connect() 
+void MQTT_connect()
 {
   int8_t ret;
 
   // Stop if already connected.
-  if (mqtt.connected()) 
+  if (mqtt.connected())
   {
     return;
   }
 
   uint8_t retries = 3;
   while ((ret = mqtt.connect()) != 0) // connect will return 0 for connected
-  { 
-       
+  {
+
        mqtt.disconnect();
        delay(5000);  // wait 5 seconds
        retries--;
-       if (retries == 0) 
+       if (retries == 0)
        {
          // basically die and wait for WDT to reset me
          while (1);
        }
   }
-  
+
 }
 
 void open_door(){
-  
+
   servo.write(OPEN_ANGLE);   // Send the command to the servo motor to open the trap door
 }
 
 void close_door(){
-  
+
   servo.write(CLOSE_ANGLE);   // Send te command to the servo motor to close the trap door
 }
